@@ -23,15 +23,17 @@ const main = async () => {
   })
 
   // regex for YYYY/MM/DD
-  const date_regex = new RegExp('^\d{4}\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])$');
+  const date_regex = /\d{4}\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/g
   const lines = error_logs.split('\n');
 
   for (const line of lines) {
     // we check for a data within the line
     const date = line.match(date_regex);
+    console.log('--------------------');
     console.log(date);
+    console.log(line);
   }
-  
+
   // send a message with the bot
   //const body = await bot.sendMessage(TELEGRAM_CHAT_ID, "coucou mec 2")
   //console.log(body);
