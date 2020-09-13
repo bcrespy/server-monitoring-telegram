@@ -7,15 +7,22 @@ const telegram = require('node-telegram-bot-api')
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
 
+const default_date_regex = /\d{4}\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/g    // YYYY/MM/DD
+const default_time_regex = /(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/g    // HH:MM:SS
+
 // path to the files in which errors needs to be checked
 const ERROR_LOGS = [
   {
     name: 'nginx',
-    path: '/var/log/nginx/error.log' 
+    path: '/var/log/nginx/error.log',
+    //date_regex: //
+    //time: //
   },
   {
     name: 'nginx+1',
-    path: '/var/log/nginx/error.log.1'
+    path: '/var/log/nginx/error.log.1',
+    //date_regex: //
+    //time: //
   }
 ];
 
@@ -33,10 +40,9 @@ const main = async () => {
       flag: 'r',
     })
   
-    // regex for YYYY/MM/DD
-    const date_regex = /\d{4}\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/g
-    // regex for HH:MM:SS
-    const time_regex = /(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/g
+    // overwrite the regex for the date & time
+    const date_regex = error_log.date_regex ? error_log.date_regex : default_date_regex;
+    const time_regex = error_log.time_regex ? error_log.time_regex : default_time_regex;
   
     const now = new Date().getTime();
     const lines = error_logs.split('\n')
