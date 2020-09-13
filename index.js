@@ -75,7 +75,7 @@ const main = async () => {
 
   // if there are errors, we send it via the bot
   if (error_message) {
-    const body = await bot.sendMessage(TELEGRAM_CHAT_ID, error_message)
+    const body = await bot.sendMessage(TELEGRAM_CHAT_ID, error_message, { parse_mode: 'HTML' })
     console.log(body);
   }
 }
