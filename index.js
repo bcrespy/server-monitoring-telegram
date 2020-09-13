@@ -3,12 +3,15 @@ require('dotenv').config();
 const fs = require('fs')
 const fetch = require('node-fetch')
 const telegram = require('node-telegram-bot-api')
+const argv = require('minimist')(process.argv.slice(2));
+
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
 
-const default_date_regex = /\d{4}\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/g    // YYYY/MM/DD
-const default_time_regex = /(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/g    // HH:MM:SS
+const DEFAULT_TIME = 3600
+const DEFAULT_DATE_REGEX = /\d{4}\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/g    // YYYY/MM/DD
+const DEFAULT_TIME_REGEX = /(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/g    // HH:MM:SS
 
 // path to the files in which errors needs to be checked
 const ERROR_LOGS = [
@@ -26,6 +29,9 @@ const ERROR_LOGS = [
   }
 ];
 
+// define the execution rules based on the arguments
+const search_period = argv.t ? argv.t : DEFAULT_TIME
+
 // setup bot with token ID
 const bot = new telegram(TELEGRAM_TOKEN)
 
@@ -41,8 +47,8 @@ const main = async () => {
     })
   
     // overwrite the regex for the date & time
-    const date_regex = error_log.date_regex ? error_log.date_regex : default_date_regex;
-    const time_regex = error_log.time_regex ? error_log.time_regex : default_time_regex;
+    const date_regex = error_log.date_regex ? error_log.date_regex : DEFAULT_DATE_REGEX;
+    const time_regex = error_log.time_regex ? error_log.time_regex : DEFAULT_TIME_REGEX;
   
     const now = new Date().getTime();
     const lines = error_logs.split('\n')
@@ -60,13 +66,13 @@ const main = async () => {
         let hours_diff = (now - timestamp) / 1000 / 3600;
   
         // if an error was spotted in the last 4 hours, we want to add it to the report
-        if (hours_diff <= 1) {
+        if (hours_diff <= search_period * 3600) {
           error = line;
           break;
         }
   
         // if the difference is greater than what's required, we just discard everything, it means no error was found
-        if (hours_diff > 1) {
+        if (hours_diff > search_period * 3600) {
           break;
         }
       }
