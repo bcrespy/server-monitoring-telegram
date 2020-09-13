@@ -22,7 +22,12 @@ const main = async () => {
     flag: 'r',
   })
 
-  console.log(error_logs);
+  const lines = error_logs.split('\n');
+
+  for (const line of lines) {
+    console.log("-------------");
+    console.log(line);
+  }
   
   // send a message with the bot
   //const body = await bot.sendMessage(TELEGRAM_CHAT_ID, "coucou mec 2")
