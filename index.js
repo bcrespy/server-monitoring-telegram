@@ -68,7 +68,7 @@ const main = async () => {
   let error_message = null;
   if (Object.keys(errors).length > 0) {
     error_message = 'Error(s) were found during the monitoring\n--------------\n--------------\n'
-    for (let origin of errors) {
+    for (let origin in errors) {
       error_message+= `<b>${origin}</b>\n--------------\n${errors[origin]}\n--------------\n`
     }
   }
