@@ -45,39 +45,39 @@ const main = async () => {
       encoding: 'utf-8',
       flag: 'r',
     })
-  
+
     // overwrite the regex for the date & time
     const date_regex = error_log.date_regex ? error_log.date_regex : DEFAULT_DATE_REGEX;
     const time_regex = error_log.time_regex ? error_log.time_regex : DEFAULT_TIME_REGEX;
-  
+
     const now = new Date().getTime();
-    const lines = error_logs.split('\n')
-  
+    const lines = error_logs.split('\n').reverse()
+
     // will be changed if an error is detected
     let error = null;
-  
+
     for (const line of lines) {
       // we check for a data within the line
       const date = line.match(date_regex)
       const time = line.match(time_regex)
-  
+
       if (date && time) { // a resut was found
         let timestamp = new Date(`${date[0]} ${time[0]}`).getTime();
         let hours_diff = (now - timestamp) / 1000 / 3600;
-  
+
         // if an error was spotted in the last 4 hours, we want to add it to the report
-        if (hours_diff <= search_period * 3600) {
+        if (hours_diff <= search_period / 3600) {
           error = line;
           break;
         }
-  
+
         // if the difference is greater than what's required, we just discard everything, it means no error was found
-        if (hours_diff > search_period * 3600) {
+        if (hours_diff > search_period / 3600) {
           break;
         }
       }
     }
-  
+
     // do we have an error ?
     if (error) {
       errors[error_log.name] = error;
@@ -99,7 +99,7 @@ const main = async () => {
   if (error_message) {
     const body = await bot.sendMessage(TELEGRAM_CHAT_ID, error_message, { parse_mode: 'HTML' })
     console.log(`Error message was sent the ${nowDate.toISOString().split('T')[0]} at ${nowDate.getHours()}:${nowDate.getMinutes()}\n${error_message}\n\n`);
-  } 
+  }
   else {
     console.log(`${nowDate.toISOString().split('T')[0]} at ${nowDate.getHours()}:${nowDate.getMinutes()}\nNo error found\n\n`)
   }
