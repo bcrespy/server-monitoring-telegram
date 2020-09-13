@@ -10,6 +10,8 @@ This utility is expected to be run at a regular interval and checks for errors i
 
 The script looks for every line in the error log files and if at least an error is found since the last execution of the script, a message via Telegram with the last error. Only the last error is being sent to prevent potential flood of messages. In that regard, once an error is received it is up to the user if he wants to see what happened.
 
+The `run.sh` can be executed to run the index.js via node. Simple
+
 # Configuration
 
 Some steps are required for configuration. A telegram api bot token is required as well as your chat id so that the bot can send message to a telegram account.
