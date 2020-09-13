@@ -37,7 +37,7 @@ const main = async () => {
 
     if (date && time) { // a resut was found
       let timestamp = new Date(`${date[0]} ${time[0]}`).getTime();
-      console.log((now - timestamp) / 3600);
+      console.log((now - timestamp) / 1000 / 3600);
     }
 
     console.log('--------------------')
