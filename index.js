@@ -24,14 +24,22 @@ const main = async () => {
 
   // regex for YYYY/MM/DD
   const date_regex = /\d{4}\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/g
-  const lines = error_logs.split('\n');
+  // regex for HH:MM:SS
+  const time_regex = /(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/g
+
+  const lines = error_logs.split('\n')
 
   for (const line of lines) {
     // we check for a data within the line
-    const date = line.match(date_regex);
-    console.log('--------------------');
-    console.log(date);
-    console.log(line);
+    const date = line.match(date_regex)
+    const time = line.match(time_regex)
+
+    if (date && time) { // a resut was found
+      console.log({ date, time })
+    }
+
+    console.log('--------------------')
+    console.log(line)
   }
 
   // send a message with the bot
