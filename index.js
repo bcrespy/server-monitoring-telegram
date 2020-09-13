@@ -22,11 +22,14 @@ const main = async () => {
     flag: 'r',
   })
 
+  // regex for YYYY/MM/DD
+  const date_regex = new RegExp('^\d{4}\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])$');
   const lines = error_logs.split('\n');
 
   for (const line of lines) {
-    console.log("-------------");
-    console.log(line);
+    // we check for a data within the line
+    const date = line.match(date_regex);
+    console.log(date);
   }
   
   // send a message with the bot
