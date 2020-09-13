@@ -16,6 +16,9 @@ const ERROR_LOGS = [
 const bot = new telegram(TELEGRAM_TOKEN)
 
 const main = async () => {
+  // the main error object
+  const errors = {};
+
   // checks for possible errors in the logs
   const error_logs = fs.readFileSync(ERROR_LOGS[0], {
     encoding: 'utf-8',
@@ -30,6 +33,9 @@ const main = async () => {
   const now = new Date().getTime();
   const lines = error_logs.split('\n')
 
+  // will be changed if an error is detected
+  let error = null;
+
   for (const line of lines) {
     // we check for a data within the line
     const date = line.match(date_regex)
@@ -37,16 +43,41 @@ const main = async () => {
 
     if (date && time) { // a resut was found
       let timestamp = new Date(`${date[0]} ${time[0]}`).getTime();
-      console.log((now - timestamp) / 1000 / 3600);
-    }
+      let hours_diff = (now - timestamp) / 1000 / 3600;
 
-    console.log('--------------------')
-    console.log(line)
+      // if an error was spotted in the last 4 hours, we want to add it to the report
+      if (hours_diff <= 100) {
+        error = line;
+        break;
+      }
+
+      // if the difference is greater than what's required, we just discard everything, it means no error was found
+      if (hours_diff > 100) {
+        break;
+      }
+    }
   }
 
-  // send a message with the bot
-  //const body = await bot.sendMessage(TELEGRAM_CHAT_ID, "coucou mec 2")
-  //console.log(body);
+  // do we have an error ?
+  if (error) {
+    errors['nginx'] = error;
+  }
+
+
+  // generic message composition
+  let error_message = null;
+  if (Object.keys(errors).length > 0) {
+    error_message = 'Error(s) were found during the monitoring\n--------------\n--------------\n'
+    for (let origin of errors) {
+      error_message+= `<b>${origin}</b>\n--------------\n${errors[origin]}\n--------------\n`
+    }
+  }
+
+  // if there are errors, we send it via the bot
+  if (error_message) {
+    const body = await bot.sendMessage(TELEGRAM_CHAT_ID, error_message)
+    console.log(body);
+  }
 }
 
 main();
