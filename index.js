@@ -27,6 +27,7 @@ const main = async () => {
   // regex for HH:MM:SS
   const time_regex = /(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/g
 
+  const now = new Date().getTime();
   const lines = error_logs.split('\n')
 
   for (const line of lines) {
@@ -35,7 +36,8 @@ const main = async () => {
     const time = line.match(time_regex)
 
     if (date && time) { // a resut was found
-      console.log({ date, time })
+      let timestamp = new Date(`${date[0]} ${time[0]}`).getTime();
+      console.log((now - timestamp) / 3600);
     }
 
     console.log('--------------------')
