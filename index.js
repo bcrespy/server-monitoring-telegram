@@ -74,9 +74,13 @@ const main = async () => {
   }
 
   // if there are errors, we send it via the bot
+  const nowDate = new Date();
   if (error_message) {
     const body = await bot.sendMessage(TELEGRAM_CHAT_ID, error_message, { parse_mode: 'HTML' })
-    console.log(`Error message was sent at ${new Date().toISOString().split('T')[0]}:\n${error_message}\n\n`);
+    console.log(`Error message was sent the ${nowDate.toISOString().split('T')[0]} at ${nowDate.getHours()}:${nowDate.getMinutes()}\n${error_message}\n\n`);
+  } 
+  else {
+    console.log(`${nowDate.toISOString().split('T')[0]} at ${nowDate.getHours()}:${nowDate.getMinutes()}\nNo error found\n\n`)
   }
 }
 
